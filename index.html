@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Words Memory</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    header {
+        background-color: #4a90e2;
+        color: white;
+        padding: 20px;
+        width: 100%;
+        text-align: center;
+        font-size: 1.5em;
+    }
+    .container {
+        margin-top: 30px;
+        width: 90%;
+        max-width: 600px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+        padding: 10px;
+        margin: 5px 0;
+        width: 100%;
+        font-size: 1em;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    li {
+        background: #e4e4e4;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    li button {
+        width: auto;
+        margin-left: 10px;
+    }
+</style>
+</head>
+<body>
+
+<header>English Words Memory</header>
+
+<div class="container">
+    <h2>Add a Word</h2>
+    <input type="text" id="englishWord" placeholder="English word">
+    <input type="text" id="meaning" placeholder="Meaning in Arabic">
+    <button onclick="addWord()">Add Word</button>
+
+    <h2>Words List</h2>
+    <ul id="wordsList"></ul>
+
+    <button onclick="clearAll()" style="background:red; color:white;">Clear All Words</button>
+</div>
+
+<script>
+    let words = JSON.parse(localStorage.getItem('words')) || [];
+
+    function saveWords() {
+        localStorage.setItem('words', JSON.stringify(words));
+        displayWords();
+    }
+
+    function addWord() {
+        const englishWord = document.getElementById('englishWord').value.trim();
+        const meaning = document.getElementById('meaning').value.trim();
+        if (englishWord && meaning) {
+            words.push({english: englishWord, arabic: meaning});
+            saveWords();
+            document.getElementById('englishWord').value = '';
+            document.getElementById('meaning').value = '';
+        } else {
+            alert('Please fill both fields!');
+        }
+    }
+
+    function deleteWord(index) {
+        words.splice(index, 1);
+        saveWords();
+    }
+
+    function clearAll() {
+        if (confirm('Are you sure you want to delete all words?')) {
+            words = [];
+            saveWords();
+        }
+    }
+
+    function displayWords() {
+        const list = document.getElementById('wordsList');
+        list.innerHTML = '';
+        words.forEach((word, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `${word.english} - ${word.arabic} <button onclick="deleteWord(${index})">Delete</button>`;
+            list.appendChild(li);
+        });
+    }
+
+    // Initial display
+    displayWords();
+</script>
+
+</body>
+</html>
