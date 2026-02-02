@@ -1,122 +1,569 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English Words Memory</title>
+<title>المترجم الشامل - Universal Translator</title>
 <style>
+    :root {
+        --primary-color: #4a90e2;
+        --primary-hover: #357abd;
+        --bg-color: #f4f7f6;
+        --card-bg: #ffffff;
+        --text-color: #333;
+        --border-color: #ddd;
+        --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        --radius: 12px;
+        --danger: #e74c3c;
+    }
+
     body {
-        font-family: Arial, sans-serif;
-        background: #f0f2f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
         margin: 0;
         padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        color: var(--text-color);
+        line-height: 1.6;
     }
+
+    /* Header */
     header {
-        background-color: #4a90e2;
+        background: linear-gradient(135deg, var(--primary-color), #67b26f);
         color: white;
         padding: 20px;
-        width: 100%;
         text-align: center;
-        font-size: 1.5em;
+        box-shadow: var(--shadow);
     }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8em;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        opacity: 0.9;
+        font-size: 0.9em;
+    }
+
+    /* Main Container */
     .container {
-        margin-top: 30px;
-        width: 90%;
-        max-width: 600px;
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        width: 95%;
+        max-width: 900px;
+        margin: 30px auto;
     }
-    input, button {
-        padding: 10px;
-        margin: 5px 0;
-        width: 100%;
-        font-size: 1em;
+
+    /* Translation Card */
+    .translator-card {
+        background: var(--card-bg);
+        padding: 25px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
     }
-    ul {
-        list-style: none;
-        padding: 0;
-    }
-    li {
-        background: #e4e4e4;
-        margin: 5px 0;
-        padding: 10px;
-        border-radius: 5px;
+
+    .controls {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 15px;
+        gap: 10px;
+        flex-wrap: wrap;
     }
-    li button {
-        width: auto;
-        margin-left: 10px;
+
+    .lang-select {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1em;
+        background: #fff;
+    }
+
+    .swap-btn {
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        font-size: 1.2em;
+        color: var(--primary-color);
+        transition: transform 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .swap-btn:hover {
+        transform: rotate(180deg);
+        background-color: #f0f8ff;
+    }
+
+    .text-area-container {
+        position: relative;
+    }
+
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        resize: none;
+        font-size: 1.1em;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        background-color: #fafafa;
+    }
+
+    textarea:focus {
+        outline: 2px solid var(--primary-color);
+        background-color: #fff;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: background 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        width: 100%; /* Full width on small screens */
+        justify-content: center;
+        padding: 15px;
+        font-size: 1.1em;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .btn-icon {
+        background-color: #eef2f5;
+        color: #555;
+        padding: 8px 12px;
+    }
+
+    .btn-icon:hover {
+        background-color: #dce4eb;
+    }
+
+    .grid-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .grid-inputs {
+            grid-template-columns: 1fr;
+        }
+        .controls {
+            flex-direction: row;
+        }
+    }
+
+    /* History Section */
+    .history-section {
+        background: var(--card-bg);
+        padding: 25px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        background: #f9f9f9;
+        border-left: 4px solid var(--primary-color);
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: transform 0.2s;
+    }
+
+    li:hover {
+        transform: translateX(-5px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .word-content {
+        flex-grow: 1;
+        margin-left: 15px;
+    }
+
+    .word-source {
+        font-weight: bold;
+        color: var(--text-color);
+        font-size: 1.1em;
+    }
+
+    .word-target {
+        color: #666;
+        font-size: 1em;
+    }
+
+    .delete-btn {
+        background: var(--danger);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+    }
+
+    .delete-btn:hover {
+        background: #c0392b;
+    }
+
+    /* Toast Notification */
+    #toast {
+        visibility: hidden;
+        min-width: 250px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 8px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        bottom: 30px;
+        transform: translateX(-50%);
+        font-size: 17px;
+        opacity: 0;
+        transition: opacity 0.5s, bottom 0.5s;
+    }
+
+    #toast.show {
+        visibility: visible;
+        opacity: 1;
+        bottom: 50px;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        display: none; /* Hidden by default */
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+        text-align: center;
+        color: #888;
+        padding: 20px;
     }
 </style>
 </head>
 <body>
 
-<header>English Words Memory</header>
+<header>
+    <h1>المترجم الشامل</h1>
+    <p>ترجمة فورية، نطق صوتي، وحفظ السجل</p>
+</header>
 
-<div class="container">
-    <h2>Add a Word</h2>
-    <input type="text" id="englishWord" placeholder="English word">
-    <input type="text" id="meaning" placeholder="Meaning in Arabic">
-    <button onclick="addWord()">Add Word</button>
+<main class="container">
+    
+    <!-- Translation Area -->
+    <div class="translator-card">
+        <div class="controls">
+            <select id="sourceLang" class="lang-select">
+                <option value="en-GB">الإنجليزية</option>
+                <option value="ar-SA" selected>العربية</option>
+                <option value="fr-FR">الفرنسية</option>
+                <option value="de-DE">الألمانية</option>
+                <option value="es-ES">الإسبانية</option>
+                <option value="it-IT">الإيطالية</option>
+                <option value="ru-RU">الروسية</option>
+                <option value="tr-TR">التركية</option>
+                <option value="ja-JP">اليابانية</option>
+            </select>
 
-    <h2>Words List</h2>
-    <ul id="wordsList"></ul>
+            <button class="swap-btn" onclick="swapLanguages()" title="تبديل اللغات">⇄</button>
 
-    <button onclick="clearAll()" style="background:red; color:white;">Clear All Words</button>
-</div>
+            <select id="targetLang" class="lang-select">
+                <option value="en-GB" selected>الإنجليزية</option>
+                <option value="ar-SA">العربية</option>
+                <option value="fr-FR">الفرنسية</option>
+                <option value="de-DE">الألمانية</option>
+                <option value="es-ES">الإسبانية</option>
+                <option value="it-IT">الإيطالية</option>
+                <option value="ru-RU">الروسية</option>
+                <option value="tr-TR">التركية</option>
+                <option value="ja-JP">اليابانية</option>
+            </select>
+        </div>
+
+        <div class="grid-inputs">
+            <!-- Input -->
+            <div>
+                <textarea id="inputText" placeholder="أدخل النص للترجمة هنا..."></textarea>
+                <div class="action-buttons">
+                    <button class="btn btn-icon" onclick="speak('input')">🔊 استماع</button>
+                    <button class="btn btn-icon" onclick="copyToClipboard('inputText')">📋 نسخ</button>
+                </div>
+            </div>
+
+            <!-- Output -->
+            <div>
+                <textarea id="outputText" readonly placeholder="ستظهر الترجمة هنا..."></textarea>
+                <div class="action-buttons">
+                    <button class="btn btn-icon" onclick="speak('output')">🔊 استماع</button>
+                    <button class="btn btn-icon" onclick="copyToClipboard('outputText')">📋 نسخ</button>
+                    <button class="btn btn-icon" style="color: green;" onclick="saveToHistory()">💾 حفظ</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="translateText()">
+                <span id="btnText">ترجمة الآن</span>
+                <div class="spinner" id="loadingSpinner"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- History Area -->
+    <div class="history-section">
+        <div class="history-header">
+            <h2>سجل الكلمات والترجمات</h2>
+            <button class="btn delete-btn" onclick="clearAll()" style="background-color: #e74c3c;">مسح الكل</button>
+        </div>
+        <ul id="historyList">
+            <!-- Items will be added here -->
+        </ul>
+        <div id="emptyState" class="empty-state">لا يوجد ترجمات محفوظة حالياً</div>
+    </div>
+
+</main>
+
+<!-- Toast Notification -->
+<div id="toast">تمت العملية بنجاح</div>
 
 <script>
-    let words = JSON.parse(localStorage.getItem('words')) || [];
+    // --- State Management ---
+    let history = JSON.parse(localStorage.getItem('translationHistory')) || [];
 
-    function saveWords() {
-        localStorage.setItem('words', JSON.stringify(words));
-        displayWords();
+    // --- Translation Logic ---
+    async function translateText() {
+        const inputText = document.getElementById('inputText').value.trim();
+        const sourceLang = document.getElementById('sourceLang').value;
+        const targetLang = document.getElementById('targetLang').value;
+
+        if (!inputText) {
+            showToast("الرجاء إدخال نص للترجمة");
+            return;
+        }
+
+        // UI Updates for loading
+        const btn = document.querySelector('.btn-primary');
+        const btnText = document.getElementById('btnText');
+        const spinner = document.getElementById('loadingSpinner');
+        const outputArea = document.getElementById('outputText');
+
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        spinner.style.display = 'inline-block';
+        outputArea.value = 'جاري الترجمة...';
+
+        // Extract simple language codes (e.g., 'en-GB' -> 'en')
+        const sLangCode = sourceLang.split('-')[0];
+        const tLangCode = targetLang.split('-')[0];
+
+        const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(inputText)}&langpair=${sLangCode}|${tLangCode}`;
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (data.responseStatus === 200) {
+                outputArea.value = data.responseData.translatedText;
+                // Optional: Auto save successful translations? 
+                // Let's not force save to avoid clutter, user clicks save manually.
+            } else {
+                outputArea.value = "حدث خطأ في الترجمة. يرجى المحاولة لاحقاً.";
+                console.error("API Error:", data);
+            }
+        } catch (error) {
+            outputArea.value = "فشل الاتصال بالخدمة. تأكد من الإنترنت.";
+            console.error("Network Error:", error);
+        } finally {
+            // Reset UI
+            btn.disabled = false;
+            btnText.style.display = 'inline';
+            spinner.style.display = 'none';
+        }
     }
 
-    function addWord() {
-        const englishWord = document.getElementById('englishWord').value.trim();
-        const meaning = document.getElementById('meaning').value.trim();
-        if (englishWord && meaning) {
-            words.push({english: englishWord, arabic: meaning});
-            saveWords();
-            document.getElementById('englishWord').value = '';
-            document.getElementById('meaning').value = '';
+    function swapLanguages() {
+        const source = document.getElementById('sourceLang');
+        const target = document.getElementById('targetLang');
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+
+        // Swap Select Values
+        const tempLang = source.value;
+        source.value = target.value;
+        target.value = tempLang;
+
+        // Swap Text Values
+        const tempText = inputText.value;
+        inputText.value = outputText.value;
+        outputText.value = tempText;
+    }
+
+    // --- Speech Synthesis (Text to Speech) ---
+    function speak(type) {
+        const text = type === 'input' ? document.getElementById('inputText').value : document.getElementById('outputText').value;
+        const lang = type === 'input' ? document.getElementById('sourceLang').value : document.getElementById('targetLang').value;
+
+        if (!text) {
+            showToast("لا يوجد نص لقراءته");
+            return;
+        }
+
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            window.speechSynthesis.speak(utterance);
         } else {
-            alert('Please fill both fields!');
+            showToast("متصفحك لا يدعم القراءة الصوتية");
         }
     }
 
-    function deleteWord(index) {
-        words.splice(index, 1);
-        saveWords();
+    // --- Clipboard ---
+    function copyToClipboard(elementId) {
+        const copyText = document.getElementById(elementId);
+        if (!copyText.value) return;
+        
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // Mobile compatibility
+        navigator.clipboard.writeText(copyText.value).then(() => {
+            showToast("تم نسخ النص!");
+        });
     }
 
-    function clearAll() {
-        if (confirm('Are you sure you want to delete all words?')) {
-            words = [];
-            saveWords();
+    // --- History / Memory Logic ---
+    function saveToHistory() {
+        const inputText = document.getElementById('inputText').value.trim();
+        const outputText = document.getElementById('outputText').value.trim();
+        const sLang = document.getElementById('sourceLang').options[document.getElementById('sourceLang').selectedIndex].text;
+        const tLang = document.getElementById('targetLang').options[document.getElementById('targetLang').selectedIndex].text;
+
+        if (!inputText || !outputText) {
+            showToast("لا يوجد ترجمة للحفظ");
+            return;
         }
+
+        const newItem = {
+            id: Date.now(),
+            source: inputText,
+            target: outputText,
+            sLang: sLang,
+            tLang: tLang
+        };
+
+        history.unshift(newItem); // Add to top
+        localStorage.setItem('translationHistory', JSON.stringify(history));
+        displayHistory();
+        showToast("تم الحفظ في القائمة");
     }
 
-    function displayWords() {
-        const list = document.getElementById('wordsList');
+    function displayHistory() {
+        const list = document.getElementById('historyList');
+        const emptyState = document.getElementById('emptyState');
+        
         list.innerHTML = '';
-        words.forEach((word, index) => {
+        
+        if (history.length === 0) {
+            emptyState.style.display = 'block';
+            return;
+        } else {
+            emptyState.style.display = 'none';
+        }
+
+        history.forEach((item) => {
             const li = document.createElement('li');
-            li.innerHTML = `${word.english} - ${word.arabic} <button onclick="deleteWord(${index})">Delete</button>`;
+            li.innerHTML = `
+                <div class="word-content">
+                    <div class="word-source">(${item.sLang}) ${item.source}</div>
+                    <div class="word-target">(${item.tLang}) ${item.target}</div>
+                </div>
+                <button class="delete-btn" onclick="deleteItem(${item.id})">حذف</button>
+            `;
             list.appendChild(li);
         });
     }
 
-    // Initial display
-    displayWords();
+    function deleteItem(id) {
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('translationHistory', JSON.stringify(history));
+        displayHistory();
+    }
+
+    function clearAll() {
+        if (history.length === 0) return;
+        if (confirm('هل أنت متأكد من مسح جميع الكلمات المحفوظة؟')) {
+            history = [];
+            localStorage.setItem('translationHistory', JSON.stringify(history));
+            displayHistory();
+            showToast("تم مسح السجل");
+        }
+    }
+
+    // --- UI Utilities ---
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "show";
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+
+    // Initialize
+    displayHistory();
+
 </script>
 
 </body>
